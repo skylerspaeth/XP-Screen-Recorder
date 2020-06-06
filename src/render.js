@@ -11,12 +11,25 @@ const
 // Electron modules
 const
 	{ desktopCapturer, remote } = require('electron'),
-	{ Menu } = remote
+	{ Menu, dialog } = remote,
+	{ writeFile } = require('fs')
 ;
 
 // Button event handlers
 videoSelectBtn.onclick = getSources;
 cancelBtn.onclick = cancel;
+stopBtn.onclick = e => {
+	mediaRecorder.stop();
+	startBtn.classList.remove('btn-danger');
+	startBtn.innerHTML = 'Record&nbsp;&nbsp;🎥';
+	cancel();
+}
+startBtn.onclick = e => {
+	mediaRecorder.start();
+	startBtn.classList.add('btn-danger');
+	startBtn.innerHTML = 'Recording';
+	stopBtn.style.display = 'inline';
+};
 
 async function getSources() {
 	const inputSources = await desktopCapturer.getSources({
@@ -32,6 +45,9 @@ async function getSources() {
 	);
 	videoOptionsMenu.popup();
 }
+
+let mediaRecorder;
+const recordedChunks = [];
 
 async function selectSource(source) {
 	videoSelectBtn.innerText = source.name;
@@ -51,8 +67,36 @@ async function selectSource(source) {
 	const stream = await navigator.mediaDevices.getUserMedia(constraints);
 	videoElement.srcObject = stream;
 	container.style.display = 'block';
-	cancelBtn.style.display = 'block';
+	cancelBtn.style.display = 'inline';
 	videoElement.play();
+
+	// Record media
+	const options = { mimeType: 'video/webm; codecs=vp9' };
+	mediaRecorder = new MediaRecorder(stream);
+
+	// Listen for user control events
+	mediaRecorder.ondataavailable = handleDataAvailable;
+	mediaRecorder.onstop = handleStop;
+}
+
+// Capture chunks
+function handleDataAvailable(e) {
+	console.log('video data being written to array');
+	recordedChunks.push(e.data);
+}
+
+async function handleStop(e) {
+	// Note to self: a blob is a *data structure* to handle raw data, such as the video file
+	const blob = new Blob(recordedChunks, {
+		type: 'video/webm; codecs=vp9'
+	});
+	const buffer = Buffer.from(await blob.arrayBuffer());
+	const { filePath } = await dialog.showSaveDialog({
+		buttonLabel: 'Save video',
+		defaultPath: `XP Rec Output ${Date.now()}.webm`
+	});
+	console.log(`outputting to path ${filePath}`);
+	writeFile(filePath, buffer, () => console.log('saving successful'));
 }
 
 function cancel() {

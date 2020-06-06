@@ -25,6 +25,8 @@ h1, p {
   display: none;
 }
 
+#stopBtn { display: none; }
+
 video {
   width: 100%;
   height: auto;
