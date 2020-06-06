@@ -1,6 +1,8 @@
 # Cross-platform screen recorder
 xpscreen's native Mac app is available for Download from [releases](https://github.com/skylerspaeth/XP-Screen-Recorder/releases/).
 
+![Screenshot](images/screenshot.png) <!-- .element height="50%" width="50%" -->
+
 To use in development mode, install dependencies with `npm install`.
 Once those are installed, use `npm start` to run the app natively on your machine.
 
