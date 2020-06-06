@@ -1,0 +1,32 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding: 0;
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+  padding-top: 20px;
+  background-color: #2E333C;
+}
+
+h1, p {
+  color: white !important;
+}
+
+.container {
+  display: none;
+  padding: 12px;
+  background-color: #343e4f;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+
+#cancel {
+  margin-top: 1rem;
+  display: none;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}
+
